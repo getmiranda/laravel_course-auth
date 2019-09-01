@@ -10,6 +10,7 @@ class NotaController extends Controller
     public function __construct(){
         $this->middleware('auth');
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +19,7 @@ class NotaController extends Controller
     public function index()
     {
         //Autenticamos con el email del usuario de la session actual
-        $user_email = auth()->user()->email;
+        $user_email = auth()->user()->email; //Obtenemos el usuario de la session actual
         $all_notes = Nota::where('usuario', $user_email)->paginate(5);
         return view('notes.all', compact('all_notes'));
     }
@@ -47,18 +48,25 @@ class NotaController extends Controller
             'description' => 'required'
         ]);
         
-        $note = new Nota; // Instanciamos una clase del modelo Note
+        // //Primera forma
+        // $note = new Nota; // Instanciamos una clase del modelo Note
 
-        //Obtenemos los datos de los input del form
-        $note -> nombre = $request -> name;
-        $note -> descripcion = $request -> description;
-        $note -> usuario = auth() -> user() -> email;
+        // //Obtenemos los datos de los input del form
+        // $note -> nombre = $request -> name;
+        // $note -> descripcion = $request -> description;
+        // $note -> usuario = auth() -> user() -> email;
+
+        //Segunda forma
+        $note = new Nota([
+            'nombre' => $request->get('name'),
+            'descripcion' => $request->get('description'),
+            'usuario' => auth() -> user() -> email
+        ]);
 
         $note -> save(); //Guardamos en la BD
 
-        return back() -> with('messagge', 'Added note!'); //Retornamos con msj
-
-
+        //return redirect('ruta') -> with('success', 'Note saved!'); //Retornamos con msj
+        return back() -> with('success', 'Note saved!'); //Retornamos con msj
     }
 
     /**
@@ -80,7 +88,8 @@ class NotaController extends Controller
      */
     public function edit($id)
     {
-        //
+        $note = Nota::find($id);
+        return view('notes.edit', compact('note')); 
     }
 
     /**
@@ -92,7 +101,24 @@ class NotaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        //Valida si los input no vienen vacios
+        $request->validate([
+            'name' => 'required',
+            'description' => 'required'
+        ]);
+
+        //Buscamos la nota especifica
+        $note = Nota::find($id);
+
+        //Asignamos los nuevos valores
+        $note -> nombre = $request->get('name');
+        $note -> descripcion = $request->get('description');
+        $note -> usuario = auth() -> user() -> email;
+
+        //Guardamos en la BD
+        $note ->save();
+
+        return back() -> with('success', 'Note updated!');
     }
 
     /**
@@ -103,6 +129,12 @@ class NotaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        //Buscamos la nota especifica
+        $note = Nota::find($id);
+
+        $note ->delete();
+
+        return back() -> with('success', 'Note deleted!');
     }
+
 }

@@ -6,12 +6,12 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header d-flex justify-content-between aling-items-center">
-                    <span>Add note</span>
+                    <span>Update a note</span>
                     <a href="/notes" class="btn btn-primary btn-sm">back</a>
                 </div>
 
                 <div class="card-body">
-                    
+
                     @if (session()->get('status'))
                         <div class="alert alert-success" role="alert">
                             {{ session()->get('status') }}
@@ -44,31 +44,13 @@
                         @endforeach
                     @endif
 
-                    <form action="{{ route('notes.store') }}" method="POST">
+                    <form action="{{ route('notes.update', $note->id) }}" method="POST">
                         @csrf
+                        @method('PUT')
 
-                        {{-- Validacion de campos vacios --}}
-                        {{-- @if ($errors->has('name'))
-                            <div class="alert alert-danger alert-dismissible fade show">
-                                Name is required!
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true" >&times;</span>
-                                </button>
-                            </div>
-                        @endif
-                        @if ($errors->has('description'))
-                            <div class="alert alert-danger alert-dismissible fade show">
-                                Description is required!
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true" >&times;</span>
-                                </button>
-                            </div>
-                        @endif --}}
-                        {{-- Fin Validacion de campos vacios --}}
-
-                        <input type="text" name="name" placeholder="Name" class="form-control mb-2" value="{{ old('name') }}">
-                        <input type="text" name="description" placeholder="Description" class="form-control mb-2" value="{{ old('description') }}">
-                        <button class="btn btn-primary btn-block" type="submit">Add</button>
+                        <input type="text" name="name" placeholder="Name" class="form-control mb-2" value="{{ $note->nombre }}">
+                        <input type="text" name="description" placeholder="Description" class="form-control mb-2" value="{{ $note->descripcion }}">
+                        <button class="btn btn-primary btn-block" type="submit">Update</button>
                     </form>
 
                 </div>

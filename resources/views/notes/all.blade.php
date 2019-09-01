@@ -11,11 +11,26 @@
                 </div>
 
                 <div class="card-body">
-                    @if (session('status'))
+
+                    @if (session()->get('status'))
                         <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
+                            {{ session()->get('status') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true" >&times;</span>
+                            </button>
                         </div>
                     @endif
+
+                    {{-- Bandera para notificar --}}
+                    @if (session('success'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true" >&times;</span>
+                            </button>
+                        </div>
+                    @endif
+                    {{-- Fin Bandera para notificar --}}
 
                     <table class="table">
                         <thead>
@@ -32,7 +47,19 @@
                                 <th scope="row">{{ $note->id }}</th>
                                 <th scope="row">{{ $note->nombre }}</th>
                                 <th scope="row">{{ $note->descripcion }}</th>
-                                <th scope="row">Action</th>
+                                <th scope="row">
+                                    {{-- Boton editar --}}
+                                    <a href="{{ route('notes.edit', $note->id) }}" class="btn btn-warning btn-sm">Edit</a>
+
+                                    {{-- Boton eliminar --}}
+                                    <form action="{{ route('notes.destroy', $note->id)}}" class="d-inline" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-danger btn-sm">Delete</button>          
+                                    </form>
+                                    {{-- Fin Boton eliminar --}}
+
+                                </th>
                             </tr>
                                 
                             @endforeach
